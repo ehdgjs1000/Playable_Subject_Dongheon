@@ -30,6 +30,58 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     });
     /*ArmRotation end.*/
 
+    /*CameraAspect start.*/
+    Bridge.define("CameraAspect", {
+        inherits: [UnityEngine.MonoBehaviour],
+        fields: {
+            targetAspect: 0,
+            cam: null,
+            lastScreenWidth: 0,
+            lastScreenHeight: 0
+        },
+        ctors: {
+            init: function () {
+                this.targetAspect = 0.7529412;
+            }
+        },
+        methods: {
+            /*CameraAspect.Start start.*/
+            Start: function () {
+                this.cam = this.GetComponent(UnityEngine.Camera);
+                this.UpdateCameraRect();
+                this.lastScreenWidth = UnityEngine.Screen.width;
+                this.lastScreenHeight = UnityEngine.Screen.height;
+            },
+            /*CameraAspect.Start end.*/
+
+            /*CameraAspect.Update start.*/
+            Update: function () {
+                if (UnityEngine.Screen.width !== this.lastScreenWidth || UnityEngine.Screen.height !== this.lastScreenHeight) {
+                    this.UpdateCameraRect();
+                    this.lastScreenWidth = UnityEngine.Screen.width;
+                    this.lastScreenHeight = UnityEngine.Screen.height;
+                }
+            },
+            /*CameraAspect.Update end.*/
+
+            /*CameraAspect.UpdateCameraRect start.*/
+            UpdateCameraRect: function () {
+                var windowAspect = UnityEngine.Screen.width / UnityEngine.Screen.height;
+                var scaleHeight = windowAspect / this.targetAspect;
+                if (scaleHeight < 1.0) {
+                    this.cam.rect = new UnityEngine.Rect.$ctor1(0.0, (1.0 - scaleHeight) / 2.0, 1.0, scaleHeight);
+                    return;
+                }
+                var scaleWidth = 1.0 / scaleHeight;
+                this.cam.rect = new UnityEngine.Rect.$ctor1((1.0 - scaleWidth) / 2.0, 0.0, scaleWidth, 1.0);
+            },
+            /*CameraAspect.UpdateCameraRect end.*/
+
+
+        }
+    });
+    /*CameraAspect end.*/
+
     /*CamraFollow start.*/
     Bridge.define("CamraFollow", {
         inherits: [UnityEngine.MonoBehaviour],
@@ -1627,6 +1679,274 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     });
     /*DG.Tweening.DOTweenModuleUtils+Physics end.*/
 
+    /*DongHeon.GameManager start.*/
+    Bridge.define("DongHeon.GameManager", {
+        inherits: [UnityEngine.MonoBehaviour],
+        fields: {
+            objectSpawnPoses: null,
+            orderSpawnPoses: null,
+            cokeGos: null,
+            JuiceGos: null,
+            danjiGos: null,
+            pringlesGos: null,
+            milkGos: null,
+            peperoGos: null,
+            kimbabGos: null,
+            twinGos: null,
+            yoplaitGos: null,
+            objectPool: null,
+            orderPool: null,
+            gameOverPanel: null,
+            objectLayer: null,
+            chooseOrderIndex: null,
+            isStart: false,
+            gameLevel: 0,
+            orderClearCount: 0
+        },
+        ctors: {
+            init: function () {
+                this.objectLayer = new UnityEngine.LayerMask();
+                this.chooseOrderIndex = System.Array.init(3, 0, System.Int32);
+                this.isStart = false;
+                this.gameLevel = 0;
+                this.orderClearCount = 3;
+            }
+        },
+        methods: {
+            /*DongHeon.GameManager.Start start.*/
+            Start: function () {
+                this.InitObject();
+            },
+            /*DongHeon.GameManager.Start end.*/
+
+            /*DongHeon.GameManager.Update start.*/
+            Update: function () {
+                if (UnityEngine.Input.GetMouseButtonDown(0)) {
+                    this.CheckMouseObject();
+                }
+            },
+            /*DongHeon.GameManager.Update end.*/
+
+            /*DongHeon.GameManager.InitObject start.*/
+            InitObject: function () {
+                for (var i = 0; i < 16; i = (i + 1) | 0) {
+                    this.ObjectSelect(i);
+                }
+                this.SpawnOrderObjects();
+            },
+            /*DongHeon.GameManager.InitObject end.*/
+
+            /*DongHeon.GameManager.ObjectSelect start.*/
+            ObjectSelect: function (_index) {
+                if (this.gameLevel > 3) {
+                    this.gameLevel = 3;
+                }
+                var randomObj = UnityEngine.Random.Range(0, 9);
+                var randomType = UnityEngine.Random.Range(0, ((this.gameLevel + 1) | 0));
+                var obj = null;
+                switch (randomObj) {
+                    case 0: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.cokeGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 1: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.JuiceGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 2: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.danjiGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 3: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.pringlesGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 4: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.milkGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 5: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.peperoGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 6: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.kimbabGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 7: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.twinGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                    case 8: 
+                        obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.yoplaitGos[randomType]);
+                        this.objectPool[_index] = obj;
+                        break;
+                }
+                obj.GetComponent(ObjectCtrl).objectNum = _index;
+                this.ObjectSetPosition(_index);
+            },
+            /*DongHeon.GameManager.ObjectSelect end.*/
+
+            /*DongHeon.GameManager.ObjectSetPosition start.*/
+            ObjectSetPosition: function (_index) {
+                this.objectPool[_index].transform.position = this.objectSpawnPoses[_index].position.$clone();
+            },
+            /*DongHeon.GameManager.ObjectSetPosition end.*/
+
+            /*DongHeon.GameManager.SpawnOrderObjects start.*/
+            SpawnOrderObjects: function () {
+                this.orderClearCount = 3;
+                for (var j = 0; j < 3; j = (j + 1) | 0) {
+                    this.chooseOrderIndex[j] = -1;
+                }
+                for (var i = 0; i < 3; i = (i + 1) | 0) {
+                    this.ChooseOrderObject(i);
+                }
+            },
+            /*DongHeon.GameManager.SpawnOrderObjects end.*/
+
+            /*DongHeon.GameManager.ChooseOrderObject start.*/
+            ChooseOrderObject: function (_index) {
+                var ranObj = UnityEngine.Random.Range(0, this.objectPool.length);
+                var obj = UnityEngine.Object.Instantiate(UnityEngine.GameObject, this.objectPool[ranObj]);
+                if (_index === 0) {
+                    this.chooseOrderIndex[0] = ranObj;
+                    this.orderPool[0] = obj;
+                    this.orderPool[0].transform.position = this.orderSpawnPoses[0].position.$clone();
+                    return;
+                }
+                var i = 0;
+                if (i < _index) {
+                    if (this.chooseOrderIndex[i] === ranObj) {
+                        this.ChooseOrderObject(_index);
+                        return;
+                    }
+                    this.chooseOrderIndex[_index] = ranObj;
+                    this.orderPool[_index] = obj;
+                    this.orderPool[_index].transform.position = this.orderSpawnPoses[_index].position.$clone();
+                }
+            },
+            /*DongHeon.GameManager.ChooseOrderObject end.*/
+
+            /*DongHeon.GameManager.CheckMouseObject start.*/
+            CheckMouseObject: function () {
+                var ray = UnityEngine.Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                var hit = { v : new UnityEngine.RaycastHit() };
+                if (UnityEngine.Physics.Raycast$1(ray, hit, UnityEngine.LayerMask.op_Implicit(this.objectLayer))) {
+                    UnityEngine.Debug.Log$1(hit.v.transform.name);
+                    this.StartCoroutine$1(this.CheckInOrder(hit.v.transform.gameObject));
+                }
+            },
+            /*DongHeon.GameManager.CheckMouseObject end.*/
+
+            /*DongHeon.GameManager.CheckInOrder start.*/
+            CheckInOrder: function (_clickObj) {
+                var $step = 0,
+                    $jumpFromFinally,
+                    $returnValue,
+                    i,
+                    objNum,
+                    $async_e;
+
+                var $enumerator = new Bridge.GeneratorEnumerator(Bridge.fn.bind(this, function () {
+                    try {
+                        for (;;) {
+                            switch ($step) {
+                                case 0: {
+                                    i = 0;
+                                        $step = 1;
+                                        continue;
+                                }
+                                case 1: {
+                                    if ( i < this.orderPool.length ) {
+                                            $step = 2;
+                                            continue;
+                                        }
+                                    $step = 9;
+                                    continue;
+                                }
+                                case 2: {
+                                    if (!(UnityEngine.GameObject.op_Inequality(this.orderPool[i], null)) || !(UnityEngine.GameObject.op_Inequality(_clickObj, null))) {
+                                            $step = 8;
+                                            continue;
+                                        }
+                                        if (System.String.contains(this.orderPool[i].name,_clickObj.name)) {
+                                            $step = 3;
+                                            continue;
+                                        } else  {
+                                            $step = 6;
+                                            continue;
+                                        }
+                                }
+                                case 3: {
+                                    objNum = _clickObj.GetComponent(ObjectCtrl).objectNum;
+                                        UnityEngine.Object.Destroy(this.orderPool[i].gameObject);
+                                        DG.Tweening.ShortcutExtensions.DOShakePosition$2(_clickObj.transform, 0.5);
+                                        $enumerator.current = new UnityEngine.WaitForSeconds(0.51);
+                                        $step = 4;
+                                        return true;
+                                }
+                                case 4: {
+                                    UnityEngine.Object.Destroy(_clickObj);
+                                        this.objectPool[objNum] = null;
+                                        this.ObjectSelect(objNum);
+                                        this.orderClearCount = (this.orderClearCount - 1) | 0;
+                                        if (this.orderClearCount === 0) {
+                                            this.gameLevel = (this.gameLevel + 1) | 0;
+                                            this.SpawnOrderObjects();
+                                        }
+                                        $enumerator.current = null;
+                                        $step = 5;
+                                        return true;
+                                }
+                                case 5: {
+                                    $step = 7;
+                                    continue;
+                                }
+                                case 6: {
+                                    Luna.Unity.Playable.InstallFullGame();
+                                        this.GameOver();
+                                    $step = 7;
+                                    continue;
+                                }
+                                case 7: {
+                                    $step = 8;
+                                    continue;
+                                }
+                                case 8: {
+                                    i = (i + 1) | 0;
+                                    $step = 1;
+                                    continue;
+                                }
+                                case 9: {
+
+                                }
+                                default: {
+                                    return false;
+                                }
+                            }
+                        }
+                    } catch($async_e1) {
+                        $async_e = System.Exception.create($async_e1);
+                        throw $async_e;
+                    }
+                }));
+                return $enumerator;
+            },
+            /*DongHeon.GameManager.CheckInOrder end.*/
+
+            /*DongHeon.GameManager.GameOver start.*/
+            GameOver: function () {
+                DG.Tweening.ShortcutExtensions.DOScale$1(this.gameOverPanel.transform, new pc.Vec3( 1, 1, 1 ), 0.5);
+                Luna.Unity.LifeCycle.GameEnded();
+            },
+            /*DongHeon.GameManager.GameOver end.*/
+
+
+        }
+    });
+    /*DongHeon.GameManager end.*/
+
     /*GameManager start.*/
     Bridge.define("GameManager", {
         inherits: [UnityEngine.MonoBehaviour],
@@ -1876,6 +2196,29 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     });
     /*GameManager+CharatcerType end.*/
 
+    /*GameOverPanel start.*/
+    Bridge.define("GameOverPanel", {
+        inherits: [UnityEngine.MonoBehaviour],
+        methods: {
+            /*GameOverPanel.ExitOnClick start.*/
+            ExitOnClick: function () {
+                Luna.Unity.Playable.InstallFullGame();
+            },
+            /*GameOverPanel.ExitOnClick end.*/
+
+            /*GameOverPanel.RetryOnClick start.*/
+            RetryOnClick: function () {
+                Luna.Unity.Playable.InstallFullGame();
+                UnityEngine.SceneManagement.SceneManager.LoadScene$2(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+                Bridge.ensureBaseProperty(this, "gameObject").$UnityEngine$Component$gameObject.SetActive(false);
+            },
+            /*GameOverPanel.RetryOnClick end.*/
+
+
+        }
+    });
+    /*GameOverPanel end.*/
+
     /*LevelGenerator start.*/
     Bridge.define("LevelGenerator", {
         inherits: [UnityEngine.MonoBehaviour],
@@ -1917,6 +2260,45 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
         }
     });
     /*LevelGenerator end.*/
+
+    /*MouseCtrl start.*/
+    Bridge.define("MouseCtrl", {
+        inherits: [UnityEngine.MonoBehaviour],
+        fields: {
+            mainCanvas: null,
+            offsetX: 0,
+            offsetY: 0
+        },
+        methods: {
+            /*MouseCtrl.Update start.*/
+            Update: function () {
+                var pos = { v : new UnityEngine.Vector2() };
+                UnityEngine.RectTransformUtility.ScreenPointToLocalPointInRectangle(Bridge.as(this.mainCanvas.transform, UnityEngine.RectTransform), UnityEngine.Vector2.FromVector3(UnityEngine.Input.mousePosition), (this.mainCanvas.renderMode === UnityEngine.RenderMode.ScreenSpaceOverlay) ? null : this.mainCanvas.worldCamera, pos);
+                this.transform.localPosition = UnityEngine.Vector3.FromVector2(pos.v.$clone().add( new pc.Vec2( this.offsetX, this.offsetY ) ));
+            },
+            /*MouseCtrl.Update end.*/
+
+
+        }
+    });
+    /*MouseCtrl end.*/
+
+    /*ObjectCtrl start.*/
+    Bridge.define("ObjectCtrl", {
+        inherits: [UnityEngine.MonoBehaviour],
+        fields: {
+            objectNum: 0,
+            ranRotSpeed: 0
+        },
+        methods: {
+            /*ObjectCtrl.Start start.*/
+            Start: function () { },
+            /*ObjectCtrl.Start end.*/
+
+
+        }
+    });
+    /*ObjectCtrl end.*/
 
     /*ObjectPool start.*/
     Bridge.define("ObjectPool", {
@@ -2507,6 +2889,10 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     $m("ArmRotation", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"Update","t":8,"sn":"Update","rt":$n[0].Void},{"a":2,"n":"rotationOffset","t":4,"rt":$n[0].Int32,"sn":"rotationOffset","box":function ($v) { return Bridge.box($v, System.Int32);}}]}; }, $n);
     /*ArmRotation end.*/
 
+    /*CameraAspect start.*/
+    $m("CameraAspect", function () { return {"att":1048577,"a":2,"at":[new UnityEngine.RequireComponent.ctor(UnityEngine.Camera)],"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"Start","t":8,"sn":"Start","rt":$n[0].Void},{"a":1,"n":"Update","t":8,"sn":"Update","rt":$n[0].Void},{"a":1,"n":"UpdateCameraRect","t":8,"sn":"UpdateCameraRect","rt":$n[0].Void},{"a":1,"n":"cam","t":4,"rt":$n[1].Camera,"sn":"cam"},{"a":1,"n":"lastScreenHeight","t":4,"rt":$n[0].Single,"sn":"lastScreenHeight","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":1,"n":"lastScreenWidth","t":4,"rt":$n[0].Single,"sn":"lastScreenWidth","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":2,"n":"targetAspect","t":4,"rt":$n[0].Single,"sn":"targetAspect","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}}]}; }, $n);
+    /*CameraAspect end.*/
+
     /*CamraFollow start.*/
     $m("CamraFollow", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"FixedUpdate","t":8,"sn":"FixedUpdate","rt":$n[0].Void},{"a":2,"n":"smoothSpeed","t":4,"rt":$n[0].Single,"sn":"smoothSpeed","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":2,"n":"target","t":4,"rt":$n[1].Transform,"sn":"target"}]}; }, $n);
     /*CamraFollow end.*/
@@ -2519,9 +2905,21 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     $m("GameManager.CharatcerType", function () { return {"td":GameManager,"att":258,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":2,"n":"Cat","is":true,"t":4,"rt":GameManager.CharatcerType,"sn":"Cat","box":function ($v) { return Bridge.box($v, GameManager.CharatcerType, System.Enum.toStringFn(GameManager.CharatcerType));}},{"a":2,"n":"Dog","is":true,"t":4,"rt":GameManager.CharatcerType,"sn":"Dog","box":function ($v) { return Bridge.box($v, GameManager.CharatcerType, System.Enum.toStringFn(GameManager.CharatcerType));}}]}; }, $n);
     /*GameManager+CharatcerType end.*/
 
+    /*GameOverPanel start.*/
+    $m("GameOverPanel", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":2,"n":"ExitOnClick","t":8,"sn":"ExitOnClick","rt":$n[0].Void},{"a":2,"n":"RetryOnClick","t":8,"sn":"RetryOnClick","rt":$n[0].Void}]}; }, $n);
+    /*GameOverPanel end.*/
+
     /*LevelGenerator start.*/
     $m("LevelGenerator", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"Start","t":8,"sn":"Start","rt":$n[0].Void},{"a":2,"n":"division","t":4,"rt":$n[0].Int32,"sn":"division","box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":2,"n":"levelWidth","t":4,"rt":$n[0].Single,"sn":"levelWidth","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":2,"n":"maxY","t":4,"rt":$n[0].Single,"sn":"maxY","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":2,"n":"minY","t":4,"rt":$n[0].Single,"sn":"minY","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"a":2,"n":"mushroom","t":4,"rt":$n[1].GameObject,"sn":"mushroom"},{"a":2,"n":"numberOfPlatform","t":4,"rt":$n[0].Int32,"sn":"numberOfPlatform","box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":2,"n":"platform","t":4,"rt":$n[1].GameObject,"sn":"platform"},{"a":2,"n":"spawnHeight","t":4,"rt":$n[0].Single,"sn":"spawnHeight","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}}]}; }, $n);
     /*LevelGenerator end.*/
+
+    /*MouseCtrl start.*/
+    $m("MouseCtrl", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"Update","t":8,"sn":"Update","rt":$n[0].Void},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"mainCanvas","t":4,"rt":$n[1].Canvas,"sn":"mainCanvas"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"offsetX","t":4,"rt":$n[0].Single,"sn":"offsetX","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"offsetY","t":4,"rt":$n[0].Single,"sn":"offsetY","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}}]}; }, $n);
+    /*MouseCtrl end.*/
+
+    /*ObjectCtrl start.*/
+    $m("ObjectCtrl", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"Start","t":8,"sn":"Start","rt":$n[0].Void},{"a":2,"n":"objectNum","t":4,"rt":$n[0].Int32,"sn":"objectNum","box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":1,"n":"ranRotSpeed","t":4,"rt":$n[0].Single,"sn":"ranRotSpeed","box":function ($v) { return Bridge.box($v, System.Single, System.Single.format, System.Single.getHashCode);}}]}; }, $n);
+    /*ObjectCtrl end.*/
 
     /*ObjectPool start.*/
     $m("ObjectPool", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"CreateNewObject","t":8,"sn":"CreateNewObject","rt":$n[0].Void},{"a":2,"n":"GetObject","t":8,"sn":"GetObject","rt":$n[1].GameObject},{"a":2,"n":"Initialize","t":8,"pi":[{"n":"prefabToPool","pt":$n[1].GameObject,"ps":0},{"n":"poolSize","pt":$n[0].Int32,"ps":1}],"sn":"Initialize","rt":$n[0].Void,"p":[$n[1].GameObject,$n[0].Int32]},{"a":2,"n":"ReturnAllToPool","t":8,"sn":"ReturnAllToPool","rt":$n[0].Void},{"a":2,"n":"ReturnToPool","t":8,"pi":[{"n":"obj","pt":$n[1].GameObject,"ps":0}],"sn":"ReturnToPool","rt":$n[0].Void,"p":[$n[1].GameObject]},{"a":1,"n":"objectPool","t":4,"rt":$n[4].Queue$1(UnityEngine.GameObject),"sn":"objectPool"},{"a":1,"n":"poolContainer","t":4,"rt":$n[1].Transform,"sn":"poolContainer"},{"a":1,"n":"prefab","t":4,"rt":$n[1].GameObject,"sn":"prefab"}]}; }, $n);
@@ -2550,6 +2948,10 @@ Bridge.assembly("UnityScriptsCompiler", function ($asm, globals) {
     /*UnityEngine.UI.Extensions.CasualGame.UIParticleSystem start.*/
     $m("UnityEngine.UI.Extensions.CasualGame.UIParticleSystem", function () { return {"att":1048577,"a":2,"at":[new UnityEngine.ExecuteInEditModeAttribute(),new UnityEngine.RequireComponent.$ctor1(UnityEngine.CanvasRenderer, UnityEngine.ParticleSystem),new UnityEngine.AddComponentMenu.ctor("UI/Effects/Extensions/UIParticleSystem")],"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"ov":true,"a":3,"n":"Awake","t":8,"sn":"Awake","rt":$n[0].Void},{"a":3,"n":"Initialize","t":8,"sn":"Initialize","rt":$n[0].Boolean,"box":function ($v) { return Bridge.box($v, System.Boolean, System.Boolean.toString);}},{"a":1,"n":"LateUpdate","t":8,"sn":"LateUpdate","rt":$n[0].Void},{"ov":true,"a":3,"n":"OnDestroy","t":8,"sn":"OnDestroy","rt":$n[0].Void},{"ov":true,"a":3,"n":"OnPopulateMesh","t":8,"pi":[{"n":"vh","pt":$n[3].VertexHelper,"ps":0}],"sn":"OnPopulateMesh","rt":$n[0].Void,"p":[$n[3].VertexHelper]},{"a":2,"n":"PauseParticleEmission","t":8,"sn":"PauseParticleEmission","rt":$n[0].Void},{"a":2,"n":"StartParticleEmission","t":8,"sn":"StartParticleEmission","rt":$n[0].Void},{"a":2,"n":"StopParticleEmission","t":8,"sn":"StopParticleEmission","rt":$n[0].Void},{"a":1,"n":"Update","t":8,"sn":"Update","rt":$n[0].Void},{"ov":true,"a":2,"n":"mainTexture","t":16,"rt":$n[1].Texture,"g":{"ov":true,"a":2,"n":"get_mainTexture","t":8,"rt":$n[1].Texture,"fg":"mainTexture"},"fn":"mainTexture"},{"a":1,"n":"DefaultShaderPath","is":true,"t":4,"rt":$n[0].String,"sn":"DefaultShaderPath"},{"a":1,"n":"MainTex","is":true,"t":4,"rt":$n[0].Int32,"sn":"MainTex","ro":true,"box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":1,"n":"_currentMaterial","t":4,"rt":$n[1].Material,"sn":"_currentMaterial"},{"a":1,"n":"_currentTexture","t":4,"rt":$n[1].Texture,"sn":"_currentTexture"},{"a":1,"n":"_imageUV","t":4,"rt":$n[1].Vector4,"sn":"_imageUV"},{"a":1,"n":"_isInitialised","t":4,"rt":$n[0].Boolean,"sn":"_isInitialised","box":function ($v) { return Bridge.box($v, System.Boolean, System.Boolean.toString);}},{"a":1,"n":"_mainModule","t":4,"rt":pc.ParticleSystemMain,"sn":"_mainModule"},{"a":1,"n":"_pRenderer","t":4,"rt":$n[1].ParticleSystemRenderer,"sn":"_pRenderer"},{"a":1,"n":"_pSystem","t":4,"rt":$n[1].ParticleSystem,"sn":"_pSystem"},{"a":1,"n":"_particles","t":4,"rt":System.Array.type(UnityEngine.ParticleSystem.Particle),"sn":"_particles"},{"a":1,"n":"_quad","t":4,"rt":System.Array.type(UnityEngine.UIVertex),"sn":"_quad","ro":true},{"a":1,"n":"_textureSheetAnimation","t":4,"rt":pc.ParticleSystemTextureSheetAnimation,"sn":"_textureSheetAnimation"},{"a":1,"n":"_textureSheetAnimationFrameSize","t":4,"rt":$n[1].Vector2,"sn":"_textureSheetAnimationFrameSize"},{"a":1,"n":"_textureSheetAnimationFrames","t":4,"rt":$n[0].Int32,"sn":"_textureSheetAnimationFrames","box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":1,"n":"_transform","t":4,"rt":$n[1].Transform,"sn":"_transform"},{"at":[new UnityEngine.TooltipAttribute("Having this enabled run the system in LateUpdate rather than in Update making it faster but less precise (more clunky)")],"a":2,"n":"fixedTime","t":4,"rt":$n[0].Boolean,"sn":"fixedTime","box":function ($v) { return Bridge.box($v, System.Boolean, System.Boolean.toString);}},{"at":[new UnityEngine.TooltipAttribute("Enables 3d rotation for the particles")],"a":2,"n":"use3dRotation","t":4,"rt":$n[0].Boolean,"sn":"use3dRotation","box":function ($v) { return Bridge.box($v, System.Boolean, System.Boolean.toString);}}]}; }, $n);
     /*UnityEngine.UI.Extensions.CasualGame.UIParticleSystem end.*/
+
+    /*DongHeon.GameManager start.*/
+    $m("DongHeon.GameManager", function () { return {"att":1048577,"a":2,"m":[{"a":2,"isSynthetic":true,"n":".ctor","t":1,"sn":"ctor"},{"a":1,"n":"CheckInOrder","t":8,"pi":[{"n":"_clickObj","pt":$n[1].GameObject,"ps":0}],"sn":"CheckInOrder","rt":$n[2].IEnumerator,"p":[$n[1].GameObject]},{"a":1,"n":"CheckMouseObject","t":8,"sn":"CheckMouseObject","rt":$n[0].Void},{"a":1,"n":"ChooseOrderObject","t":8,"pi":[{"n":"_index","pt":$n[0].Int32,"ps":0}],"sn":"ChooseOrderObject","rt":$n[0].Void,"p":[$n[0].Int32]},{"a":2,"n":"GameOver","t":8,"sn":"GameOver","rt":$n[0].Void},{"a":1,"n":"InitObject","t":8,"sn":"InitObject","rt":$n[0].Void},{"a":1,"n":"ObjectSelect","t":8,"pi":[{"n":"_index","pt":$n[0].Int32,"ps":0}],"sn":"ObjectSelect","rt":$n[0].Void,"p":[$n[0].Int32]},{"a":1,"n":"ObjectSetPosition","t":8,"pi":[{"n":"_index","pt":$n[0].Int32,"ps":0}],"sn":"ObjectSetPosition","rt":$n[0].Void,"p":[$n[0].Int32]},{"a":1,"n":"SpawnOrderObjects","t":8,"sn":"SpawnOrderObjects","rt":$n[0].Void},{"a":1,"n":"Start","t":8,"sn":"Start","rt":$n[0].Void},{"a":1,"n":"Update","t":8,"sn":"Update","rt":$n[0].Void},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"JuiceGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"JuiceGos"},{"a":1,"n":"chooseOrderIndex","t":4,"rt":$n[0].Array.type(System.Int32),"sn":"chooseOrderIndex"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"cokeGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"cokeGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"danjiGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"danjiGos"},{"a":1,"n":"gameLevel","t":4,"rt":$n[0].Int32,"sn":"gameLevel","box":function ($v) { return Bridge.box($v, System.Int32);}},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"gameOverPanel","t":4,"rt":$n[1].GameObject,"sn":"gameOverPanel"},{"a":1,"n":"isStart","t":4,"rt":$n[0].Boolean,"sn":"isStart","box":function ($v) { return Bridge.box($v, System.Boolean, System.Boolean.toString);}},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"kimbabGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"kimbabGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"milkGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"milkGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"objectLayer","t":4,"rt":$n[1].LayerMask,"sn":"objectLayer"},{"a":2,"n":"objectPool","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"objectPool"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"objectSpawnPoses","t":4,"rt":System.Array.type(UnityEngine.Transform),"sn":"objectSpawnPoses"},{"a":1,"n":"orderClearCount","t":4,"rt":$n[0].Int32,"sn":"orderClearCount","box":function ($v) { return Bridge.box($v, System.Int32);}},{"a":2,"n":"orderPool","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"orderPool"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"orderSpawnPoses","t":4,"rt":System.Array.type(UnityEngine.Transform),"sn":"orderSpawnPoses"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"peperoGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"peperoGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"pringlesGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"pringlesGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"twinGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"twinGos"},{"at":[new UnityEngine.SerializeFieldAttribute()],"a":1,"n":"yoplaitGos","t":4,"rt":System.Array.type(UnityEngine.GameObject),"sn":"yoplaitGos"}]}; }, $n);
+    /*DongHeon.GameManager end.*/
 
     /*DG.Tweening.DOTweenCYInstruction start.*/
     $m("DG.Tweening.DOTweenCYInstruction", function () { return {"nested":[$n[5].DOTweenCYInstruction.WaitForCompletion,$n[5].DOTweenCYInstruction.WaitForRewind,$n[5].DOTweenCYInstruction.WaitForKill,$n[5].DOTweenCYInstruction.WaitForElapsedLoops,$n[5].DOTweenCYInstruction.WaitForPosition,$n[5].DOTweenCYInstruction.WaitForStart],"att":1048961,"a":2,"s":true}; }, $n);
