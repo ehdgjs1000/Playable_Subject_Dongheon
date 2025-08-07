@@ -1,7 +1,9 @@
 using System.Collections;
 using DG.Tweening;
 using Luna.Unity;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DongHeon
 {
@@ -45,6 +47,15 @@ namespace DongHeon
 		public GameObject[] orderPool;
 
 		[SerializeField]
+		private Image progressImage;
+
+		[SerializeField]
+		private TextMeshProUGUI scoreText;
+
+		[SerializeField]
+		private ComboPopUp comboGO;
+
+		[SerializeField]
 		private GameObject gameOverPanel;
 
 		[SerializeField]
@@ -58,6 +69,10 @@ namespace DongHeon
 
 		private int orderClearCount = 3;
 
+		private float timeAttack = 5f;
+
+		private int score;
+
 		private void Start()
 		{
 			InitObject();
@@ -68,6 +83,12 @@ namespace DongHeon
 			if (Input.GetMouseButtonDown(0))
 			{
 				CheckMouseObject();
+			}
+			timeAttack -= Time.deltaTime;
+			progressImage.fillAmount = timeAttack / 5f;
+			if (timeAttack <= 0f)
+			{
+				GameOver();
 			}
 		}
 
@@ -88,57 +109,63 @@ namespace DongHeon
 			}
 			int randomObj = Random.Range(0, 9);
 			int randomType = Random.Range(0, gameLevel + 1);
-			GameObject obj = null;
-			switch (randomObj)
-			{
-			case 0:
-				obj = Object.Instantiate(cokeGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 1:
-				obj = Object.Instantiate(JuiceGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 2:
-				obj = Object.Instantiate(danjiGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 3:
-				obj = Object.Instantiate(pringlesGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 4:
-				obj = Object.Instantiate(milkGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 5:
-				obj = Object.Instantiate(peperoGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 6:
-				obj = Object.Instantiate(kimbabGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 7:
-				obj = Object.Instantiate(twinGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			case 8:
-				obj = Object.Instantiate(yoplaitGos[randomType]);
-				objectPool[_index] = obj;
-				break;
-			}
+			GameObject prefab = GetRandomPrefab(randomType);
+			GameObject obj = Object.Instantiate(prefab);
 			obj.GetComponent<ObjectCtrl>().objectNum = _index;
-			ObjectSetPosition(_index);
+			objectPool[_index] = obj;
+			obj.transform.position = objectSpawnPoses[_index].position;
 		}
 
-		private void ObjectSetPosition(int _index)
+		private GameObject GetRandomPrefab(int t)
 		{
-			objectPool[_index].transform.position = objectSpawnPoses[_index].position;
+			int num = Random.Range(0, 9);
+			if (1 == 0)
+			{
+			}
+			GameObject result;
+			switch (num)
+			{
+			case 0:
+				result = cokeGos[t];
+				break;
+			case 1:
+				result = JuiceGos[t];
+				break;
+			case 2:
+				result = danjiGos[t];
+				break;
+			case 3:
+				result = pringlesGos[t];
+				break;
+			case 4:
+				result = milkGos[t];
+				break;
+			case 5:
+				result = peperoGos[t];
+				break;
+			case 6:
+				result = kimbabGos[t];
+				break;
+			case 7:
+				result = twinGos[t];
+				break;
+			case 8:
+				result = yoplaitGos[t];
+				break;
+			default:
+				result = cokeGos[0];
+				break;
+			}
+			if (1 == 0)
+			{
+			}
+			return result;
 		}
 
 		private void SpawnOrderObjects()
 		{
+			timeAttack = 5f * Mathf.Pow(0.99f, gameLevel + 1);
+			timeAttack = 5f * Mathf.Pow(0.99f, gameLevel + 1);
 			orderClearCount = 3;
 			for (int j = 0; j < 3; j++)
 			{
@@ -180,7 +207,6 @@ namespace DongHeon
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			if (Physics.Raycast(ray, out var hit, (int)objectLayer))
 			{
-				Debug.Log(hit.transform.name);
 				StartCoroutine(CheckInOrder(hit.transform.gameObject));
 			}
 		}
@@ -197,15 +223,22 @@ namespace DongHeon
 				{
 					int objNum = _clickObj.GetComponent<ObjectCtrl>().objectNum;
 					Object.Destroy(orderPool[i].gameObject);
-					_clickObj.transform.DOShakePosition(0.5f);
-					yield return new WaitForSeconds(0.51f);
-					Object.Destroy(_clickObj);
-					objectPool[objNum] = null;
-					ObjectSelect(objNum);
+					_clickObj.transform.DOShakePosition(0.3f);
 					orderClearCount--;
 					if (orderClearCount == 0)
 					{
+						ComboPopUp combo = Object.Instantiate(comboGO, _clickObj.transform.position, Quaternion.identity);
+						combo.Setup(timeAttack);
+					}
+					yield return new WaitForSeconds(0.31f);
+					Object.Destroy(_clickObj);
+					objectPool[objNum] = null;
+					ObjectSelect(objNum);
+					if (orderClearCount == 0)
+					{
 						gameLevel++;
+						score++;
+						scoreText.text = score.ToString();
 						SpawnOrderObjects();
 					}
 					yield return null;

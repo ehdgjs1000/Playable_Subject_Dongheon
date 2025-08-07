@@ -1,0 +1,229 @@
+{
+  "BuildID": "a93b57e9-2128-40b6-a40c-fffc12bef178",
+  "Command": "project:upload",
+  "ProjectID": "1ea3bb43f778449c78ecaf64beaf075a",
+  "ProjectStateHash": "b2beefd31ea08d0181d45f0369acb3240f6a998a61d56a87fea72ba389659626",
+  "StageCompletedAt": 3,
+  "EarliestFatalError": 0,
+  "StartTime": 1754531926939,
+  "EndTime": 1754531952463,
+  "PlaygroundUserID": 25441,
+  "OperatingSystem": "win32",
+  "UnityPackageID": null,
+  "TargetPlatform": "playground",
+  "UnityVersion": "2022.3.60f1\r",
+  "LunaVersion": "6.3.0",
+  "LogCount": 8,
+  "Logs": [
+    {
+      "LogID": "6e68e227-c4bf-4b92-9a83-e1affb63013c",
+      "Order": 8,
+      "Timestamp": 1754531952667,
+      "Stage": 3,
+      "ErrorType": 3,
+      "ErrorCode": "LP3008",
+      "Description": "You are only using: 1 custom events.",
+      "Details": [
+        "You are only using 1 custom events. It is recommended to use more custom events to have a better understanding of the playable."
+      ],
+      "DescriptionValues": [
+        "1"
+      ],
+      "DetailsValues": [
+        "1"
+      ],
+      "LogCount": 1,
+      "LinePosition": null,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "f9a63708-113a-4853-a2e4-9b7db7a6bdda",
+      "Order": 0,
+      "Timestamp": 1754531928186,
+      "Stage": 1,
+      "ErrorType": 0,
+      "ErrorCode": "LP1030",
+      "Description": "TMP Font Asset uses unsupported 'Atlas Population Mode'",
+      "Details": [
+        "TMP Font Asset '{0}' uses Atlas Population Mode '{1}' which is not supported"
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [
+        "LiberationSans SDF - Fallback",
+        "Dynamic"
+      ],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "19849fb1-cbcc-49bb-a1fd-5790c9e54724",
+      "Order": 1,
+      "Timestamp": 1754531932047,
+      "Stage": 1,
+      "ErrorType": 0,
+      "ErrorCode": "LP1006",
+      "Description": "Linear color space is not supported",
+      "Details": [
+        "Due to compatibility reasons, Luna is only able to use Gamma color space for rendering. Please adjust your player settings."
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "9c95e74d-db57-4e5c-978a-6fdeefdc7d4f",
+      "Order": 2,
+      "Timestamp": 1754531932047,
+      "Stage": 1,
+      "ErrorType": 2,
+      "ErrorCode": "LP1014",
+      "Description": "We recommend running Runtime Analysis to find and remove all unused code",
+      "Details": [
+        "Navigate to the Runtime Analysis → Code tab to enable code stripping. Before uploading the playable, please make sure to have played all scenario’s of the playable in a development build to make Runtime Analysis work properly."
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "a1edc74b-7c71-471c-8e75-b2348ba25cc2",
+      "Order": 3,
+      "Timestamp": 1754531932056,
+      "Stage": 1,
+      "ErrorType": 0,
+      "ErrorCode": "LP1027",
+      "Description": "This DOTween version is not supported",
+      "Details": [
+        "The incorrect DOTween version for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager."
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [
+        ""
+      ],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "e182ff41-bc03-4c9b-8941-f57b61c00bf2",
+      "Order": 4,
+      "Timestamp": 1754531932056,
+      "Stage": 1,
+      "ErrorType": 0,
+      "ErrorCode": "LP1015",
+      "Description": "This TMP version is not fully supported",
+      "Details": [
+        "The incorrect Text Mesh Pro for this Unity version is in use, please update or downgrade to the recommended version {0} in the package manager. Go to Window → Package Manager"
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [
+        ""
+      ],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "8f510863-cb54-4483-b8d2-915b4d4e5336",
+      "Order": 5,
+      "Timestamp": 1754531932056,
+      "Stage": 1,
+      "ErrorType": 0,
+      "ErrorCode": "LP1032",
+      "Description": "Package(s) is not supported in Luna",
+      "Details": [
+        "Currently package(s) com.unity.timeline are not supported in Luna. We recommend you to remove it and workaround it's functionality."
+      ],
+      "DescriptionValues": [
+        "com.unity.timeline (1.7.6)"
+      ],
+      "DetailsValues": [
+        "com.unity.timeline"
+      ],
+      "LogCount": 1,
+      "LinePosition": 0,
+      "FilePath": "D:/UnityGame/Playable_Subject_Dongheon/Playable_Subject_Dongheon/Packages\\manifest.json",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    },
+    {
+      "LogID": "e9071eb4-3435-44b1-b5b5-7043d8c49284",
+      "Order": 6,
+      "Timestamp": 1754531932056,
+      "Stage": 1,
+      "ErrorType": 2,
+      "ErrorCode": "LP1010",
+      "Description": "Looks like a collider was scaled, this might affect performance.",
+      "Details": [
+        "BottledDrink",
+        "BottledDrink 1",
+        "BottledDrink 2",
+        "BottledDrink 3",
+        "BottleJuice",
+        "BottleJuice 1",
+        "BottleJuice 2",
+        "BottleJuice 3",
+        "Danji",
+        "Danji 1",
+        "Danji 2",
+        "Danji 3",
+        "LongPringles",
+        "LongPringles 1",
+        "LongPringles 2",
+        "LongPringles 3",
+        "Milk",
+        "Milk 1",
+        "Milk 2",
+        "Milk 3",
+        "Pepero",
+        "Pepero 1",
+        "Pepero 2",
+        "Pepero 3",
+        "Gimbab",
+        "Gimbab 1",
+        "Gimbab 2",
+        "Gimbab 3",
+        "TwinBars",
+        "TwinBars 1",
+        "TwinBars 2",
+        "TwinBars 3",
+        "Yoplait",
+        "Yoplait 1",
+        "Yoplait 2",
+        "Yoplait 3"
+      ],
+      "DescriptionValues": [],
+      "DetailsValues": [],
+      "LogCount": 36,
+      "LinePosition": 0,
+      "FilePath": "",
+      "ClassName": "",
+      "MemberName": "",
+      "Severity": 0
+    }
+  ]
+}
